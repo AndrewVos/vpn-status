@@ -10,7 +10,7 @@ public class Main {
     private bool? previouslyConnected;
     private bool exiting = false;
 
-    public VPNStatus() {
+    public VPNStatus () {
       Object (application_id: "org.vos.vpn-status");
       set_inactivity_timeout (10000);
     }
@@ -18,6 +18,11 @@ public class Main {
     public override void activate () {
       initializeNotification ();
       initializeIndicator ();
+      constantlyCheckVPNStatus ();
+      Gtk.main ();
+    }
+
+    private void constantlyCheckVPNStatus () {
       checkVPNStatus ();
 
       Timeout.add_seconds (
@@ -32,34 +37,32 @@ public class Main {
         },
         Priority.LOW
       );
-
-      Gtk.main ();
     }
 
-    private void initializeNotification() {
+    private void initializeNotification () {
       notification = new Notification ("VPN Status");
-      var icon = new ThemedIcon (INDICATOR_ICON_PATH);
+      var icon = new ThemedIcon (NOTIFICATION_ICON_PATH);
       notification.set_icon (icon);
     }
 
-    private void initializeIndicator() {
+    private void initializeIndicator () {
       indicator = new AppIndicator.Indicator ("VPN Status", INDICATOR_ICON_PATH, AppIndicator.IndicatorCategory.SYSTEM_SERVICES);
       indicator.set_status (AppIndicator.IndicatorStatus.ACTIVE);
 
-      indicator.set_status(IndicatorStatus.ACTIVE);
+      indicator.set_status (IndicatorStatus.ACTIVE);
 
-      var menu = new Gtk.Menu();
+      var menu = new Gtk.Menu ();
 
-      var item = new Gtk.MenuItem.with_label("Exit");
-      item.activate.connect(() => {
+      var item = new Gtk.MenuItem.with_label ("Exit");
+      item.activate.connect (() => {
           exiting = true;
-          indicator.set_status(IndicatorStatus.PASSIVE);
-          Gtk.main_quit();
+          indicator.set_status (IndicatorStatus.PASSIVE);
+          Gtk.main_quit ();
       });
-      item.show();
-      menu.append(item);
+      item.show ();
+      menu.append (item);
 
-      indicator.set_menu(menu);
+      indicator.set_menu (menu);
     }
 
     private void checkVPNStatus () {
@@ -67,8 +70,7 @@ public class Main {
 
       printVPNStatus(currentlyConnected);
       if (previouslyConnected != null && previouslyConnected != currentlyConnected) {
-        notifyVPNStatus(currentlyConnected);
-        updateAppIndicator(currentlyConnected);
+        notifyVPNStatus (currentlyConnected);
       }
       previouslyConnected = currentlyConnected;
     }
@@ -79,7 +81,7 @@ public class Main {
       string err;
 
       try {
-        Process.spawn_command_line_sync("/sbin/ifconfig tun0", out out, out err , out status);
+        Process.spawn_command_line_sync ("/sbin/ifconfig tun0", out out, out err , out status);
       } catch (SpawnError e) {
         stdout.printf ("Error: %s\n", e.message);
         return false;
@@ -88,7 +90,7 @@ public class Main {
       return status == 0;
     }
 
-    private void printVPNStatus(bool connected) {
+    private void printVPNStatus (bool connected) {
       stdout.puts ("VPN status: ");
       if (connected) {
         stdout.puts ("connected");
@@ -105,10 +107,6 @@ public class Main {
         notification.set_body ("disconnected");
       }
       send_notification ("vpn-status", notification);
-    }
-
-    private void updateAppIndicator(bool connected) {
-      /* indicator.set_status(IndicatorStatus.ACTIVE); */
     }
   }
 
