@@ -2,6 +2,9 @@ using AppIndicator;
 
 public class Main {
   class VPNStatus : Gtk.Application {
+    private const string INDICATOR_ICON_PATH = "/usr/share/icons/elementary/status/symbolic/network-wireless-encrypted-symbolic.svg";
+    private const string NOTIFICATION_ICON_PATH = "network-vpn";
+
     private GLib.Notification notification;
     private AppIndicator.Indicator indicator;
     private bool? previouslyConnected;
@@ -35,14 +38,13 @@ public class Main {
 
     private void initializeNotification() {
       notification = new Notification ("VPN Status");
-      var icon = new ThemedIcon ("network-vpn");
+      var icon = new ThemedIcon (INDICATOR_ICON_PATH);
       notification.set_icon (icon);
     }
 
     private void initializeIndicator() {
-      indicator = new AppIndicator.Indicator ("VPN Status", "network-vpn", AppIndicator.IndicatorCategory.APPLICATION_STATUS);
+      indicator = new AppIndicator.Indicator ("VPN Status", INDICATOR_ICON_PATH, AppIndicator.IndicatorCategory.SYSTEM_SERVICES);
       indicator.set_status (AppIndicator.IndicatorStatus.ACTIVE);
-      indicator.set_attention_icon("network-vpn");
 
       indicator.set_status(IndicatorStatus.ACTIVE);
 
