@@ -7,7 +7,6 @@ public class Main {
 
     private AppIndicator.Indicator indicator;
     private bool? previouslyConnected;
-    private bool exiting = false;
 
     public VPNStatus () {
       Object (application_id: "org.vos.vpn-status");
@@ -27,10 +26,6 @@ public class Main {
         5,
         () => {
           checkVPNStatus ();
-          if (exiting) {
-            stdout.puts ("exiting\n");
-            return Source.REMOVE;
-          }
           return Source.CONTINUE;
         },
         Priority.LOW
@@ -45,11 +40,9 @@ public class Main {
 
       var menu = new Gtk.Menu ();
 
-      var item = new Gtk.MenuItem.with_label ("Exit");
+      var item = new Gtk.MenuItem.with_label ("Network Settings...");
       item.activate.connect (() => {
-          exiting = true;
-          indicator.set_status (IndicatorStatus.PASSIVE);
-          Gtk.main_quit ();
+          showSettings ();
       });
       item.show ();
       menu.append (item);
@@ -99,6 +92,24 @@ public class Main {
         indicator.set_icon(INDICATOR_ENCRYPTED_ICON_PATH);
       } else {
         indicator.set_icon(INDICATOR_UNENCRYPTED_ICON_PATH);
+      }
+    }
+
+    bool is_dm () {
+      return Environment.get_user_name () == SettingsManager.get_default ().desktopmanager_user;
+    }
+
+    private void showSettings () {
+      if (!is_dm ()) {
+        var list = new List<string> ();
+        list.append ("network");
+
+        try {
+          var appinfo = AppInfo.create_from_commandline ("switchboard", null, AppInfoCreateFlags.SUPPORTS_URIS);
+          appinfo.launch_uris (list, null);
+        } catch (Error e) {
+          warning ("%s\n", e.message);
+        }
       }
     }
   }
