@@ -4,9 +4,7 @@ public class Main {
   class VPNStatus : Gtk.Application {
     private const string INDICATOR_ENCRYPTED_ICON_PATH = "/usr/share/icons/vpn-status/vpn-encrypted.svg";
     private const string INDICATOR_UNENCRYPTED_ICON_PATH = "/usr/share/icons/vpn-status/vpn-unencrypted.svg";
-    private const string NOTIFICATION_ICON_PATH = "network-vpn";
 
-    private GLib.Notification notification;
     private AppIndicator.Indicator indicator;
     private bool? previouslyConnected;
     private bool exiting = false;
@@ -17,7 +15,6 @@ public class Main {
     }
 
     public override void activate () {
-      initializeNotification ();
       initializeIndicator ();
       constantlyCheckVPNStatus ();
       Gtk.main ();
@@ -38,12 +35,6 @@ public class Main {
         },
         Priority.LOW
       );
-    }
-
-    private void initializeNotification () {
-      notification = new Notification ("VPN Status");
-      var icon = new ThemedIcon (NOTIFICATION_ICON_PATH);
-      notification.set_icon (icon);
     }
 
     private void initializeIndicator () {
@@ -70,7 +61,6 @@ public class Main {
       bool currentlyConnected = getVPNStatus ();
 
       printVPNStatus(currentlyConnected);
-      notifyVPNStatus (currentlyConnected);
       updateIndicator (currentlyConnected);
       previouslyConnected = currentlyConnected;
     }
@@ -98,19 +88,6 @@ public class Main {
         stdout.puts ("disconnected");
       }
       stdout.puts ("\n");
-    }
-
-    private void notifyVPNStatus (bool connected) {
-      if (previouslyConnected == null || previouslyConnected == connected) {
-        return;
-      }
-
-      if (connected) {
-        notification.set_body ("connected");
-      } else {
-        notification.set_body ("disconnected");
-      }
-      send_notification ("vpn-status", notification);
     }
 
     private void updateIndicator (bool connected) {

@@ -1,6 +1,6 @@
 # vpn-status
 
-Gtk Application for elementary OS that notifies when your VPN gets disconnected
+Gtk Application for elementary OS that shows a red status icon when your VPN gets disconnected
 
 ![https://github.com/AndrewVos/vpn-status/blob/master/screenshot.png](https://github.com/AndrewVos/vpn-status/blob/master/screenshot.png)
 
