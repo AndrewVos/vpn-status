@@ -4,7 +4,6 @@ public class Main {
   class VPNStatus : Gtk.Application {
     private const string INDICATOR_ENCRYPTED_ICON_PATH = "/usr/share/icons/vpn-status/vpn-encrypted.svg";
     private const string INDICATOR_UNENCRYPTED_ICON_PATH = "/usr/share/icons/vpn-status/vpn-unencrypted.svg";
-
     private AppIndicator.Indicator indicator;
     private bool? previouslyConnected;
 

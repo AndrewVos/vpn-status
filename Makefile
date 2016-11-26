@@ -1,7 +1,7 @@
 all: vpn-status
 
-vpn-status: VPNStatus.vala SettingsManager.vala
-	valac *.vala \
+vpn-status: src/VPNStatus.vala src/SettingsManager.vala
+	valac src/*.vala \
 		--pkg gtk+-3.0 \
 		--pkg gio-2.0 \
 		--pkg appindicator3-0.1 \
@@ -17,5 +17,5 @@ install: vpn-status
 package: vpn-status
 	fpm -s dir -t deb -n vpn-status -v 0.0.1 \
 		./vpn-status=/usr/bin/vpn-status \
-		./vpn-encrypted.svg=/usr/share/icons/vpn-status/vpn-encrypted.svg \
-		./vpn-unencrypted.svg=/usr/share/icons/vpn-status/vpn-unencrypted.svg
+		./icons/vpn-encrypted.svg=/usr/share/icons/vpn-status/vpn-encrypted.svg \
+		./icons/vpn-unencrypted.svg=/usr/share/icons/vpn-status/vpn-unencrypted.svg
