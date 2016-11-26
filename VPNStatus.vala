@@ -2,7 +2,8 @@ using AppIndicator;
 
 public class Main {
   class VPNStatus : Gtk.Application {
-    private const string INDICATOR_ICON_PATH = "/usr/share/icons/elementary/status/symbolic/network-wireless-encrypted-symbolic.svg";
+    private const string INDICATOR_ENCRYPTED_ICON_PATH = "/usr/share/icons/vpn-status/vpn-encrypted.svg";
+    private const string INDICATOR_UNENCRYPTED_ICON_PATH = "/usr/share/icons/vpn-status/vpn-unencrypted.svg";
     private const string NOTIFICATION_ICON_PATH = "network-vpn";
 
     private GLib.Notification notification;
@@ -46,7 +47,7 @@ public class Main {
     }
 
     private void initializeIndicator () {
-      indicator = new AppIndicator.Indicator ("VPN Status", INDICATOR_ICON_PATH, AppIndicator.IndicatorCategory.SYSTEM_SERVICES);
+      indicator = new AppIndicator.Indicator ("VPN Status", INDICATOR_ENCRYPTED_ICON_PATH, AppIndicator.IndicatorCategory.SYSTEM_SERVICES);
       indicator.set_status (AppIndicator.IndicatorStatus.ACTIVE);
 
       indicator.set_status (IndicatorStatus.ACTIVE);
@@ -69,9 +70,8 @@ public class Main {
       bool currentlyConnected = getVPNStatus ();
 
       printVPNStatus(currentlyConnected);
-      if (previouslyConnected != null && previouslyConnected != currentlyConnected) {
-        notifyVPNStatus (currentlyConnected);
-      }
+      notifyVPNStatus (currentlyConnected);
+      updateIndicator (currentlyConnected);
       previouslyConnected = currentlyConnected;
     }
 
@@ -101,12 +101,28 @@ public class Main {
     }
 
     private void notifyVPNStatus (bool connected) {
+      if (previouslyConnected == null || previouslyConnected == connected) {
+        return;
+      }
+
       if (connected) {
         notification.set_body ("connected");
       } else {
         notification.set_body ("disconnected");
       }
       send_notification ("vpn-status", notification);
+    }
+
+    private void updateIndicator (bool connected) {
+      if (previouslyConnected == connected) {
+        return;
+      }
+
+      if (connected) {
+        indicator.set_icon(INDICATOR_ENCRYPTED_ICON_PATH);
+      } else {
+        indicator.set_icon(INDICATOR_UNENCRYPTED_ICON_PATH);
+      }
     }
   }
 
