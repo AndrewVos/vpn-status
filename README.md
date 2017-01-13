@@ -1,3 +1,7 @@
+# UNMAINTAINED
+
+The latest updates to Loki now show a padlock over the network indicator when you're on a VPN. This seems to do kind of the same thing. The only difference in `vpn-status` is that it's a seperate icon, and red.
+
 # vpn-status
 
 Gtk Application for elementary OS that shows a red status icon when your VPN gets disconnected
